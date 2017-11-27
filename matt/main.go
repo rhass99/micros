@@ -27,16 +27,11 @@ func (u *User) OK() error {
 	return nil
 }
 
-func decoder(r *http.Request, v interface{}) error {
-	if obj, ok := v.(OK); ok {
-		err := obj.OK()
-		if err != nil {
-			if err = json.NewDecoder(r.Body).Decode(obj); err != nil {
-				return err
-			}
-		}
+func decoder(r *http.Request, v OK) error {
+	if err := json.NewDecoder(r.Body).Decode(v); err != nil {
+		return err
 	}
-	return nil
+	return v.OK()
 }
 
 func handleIncoming(w http.ResponseWriter, r *http.Request) {
